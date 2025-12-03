@@ -1,45 +1,21 @@
-import { createContext, useEffect, useState } from "react";
-import { getStoredToken, storeToken, clearToken } from "../utils/storage";
-import axiosClient from "../api/axiosClient";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({
-    user: null,
-    accessToken: getStoredToken(),
-  });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!auth.accessToken) return;
-
-      try {
-        const res = await axiosClient.get("/user/me");
-        setAuth((prev) => ({ ...prev, user: res.data }));
-      } catch {
-        clearToken();
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  const login = (token) => {
-    storeToken(token);
-    setAuth({ ...auth, accessToken: token });
-  };
-
-  const logout = () => {
-    clearToken();
-    setAuth({ user: null, accessToken: null });
-  };
+export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        setLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export default AuthProvider;
+}
