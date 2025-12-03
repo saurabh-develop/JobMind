@@ -11,6 +11,7 @@ import Notifications from "../pages/Notifications";
 import Settings from "../pages/Settings";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthProvider from "../context/AuthContext";
+import OtpVerification from "../pages/OtpVerification";
 
 const AppRouter = () => {
   return (
@@ -20,6 +21,7 @@ const AppRouter = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
+          <Route path="/otp" element={<OtpVerification />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/profile-setup" element={<ProfileSetup />} />

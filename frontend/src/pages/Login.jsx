@@ -1,7 +1,163 @@
-import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
-const Login = () => {
-  return <div>Login</div>;
-};
+export default function Login() {
+  const { login, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
 
-export default Login;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const result = await login(email, password);
+      if (result.success) {
+        navigate("/jobs");
+      } else {
+        setError(result.message);
+      }
+    } catch {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen relative flex items-center justify-center bg-slate-50 overflow-hidden">
+      {/* Decorative Ambient Blobs (Using Palette Colors) */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-200/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-slate-300/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
+
+      {/* Main Glass Card */}
+      <div className="relative z-10 w-full max-w-md p-10 bg-white/70 backdrop-blur-2xl border border-white/50 shadow-[0_8px_40px_rgb(0,0,0,0.04)] rounded-3xl">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold text-indigo-600 tracking-tight mb-2">
+            JobMind
+          </h1>
+          <p className="text-slate-500 text-sm font-medium">
+            Welcome back, please login to continue
+          </p>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center animate-pulse">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          {/* Email Input Group */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg
+                className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                />
+              </svg>
+            </div>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full pl-12 pr-5 py-4 rounded-xl border border-slate-200 bg-white/50 text-slate-900 placeholder-slate-400 font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 shadow-sm group-hover:bg-white"
+            />
+          </div>
+
+          {/* Password Input Group */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg
+                className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full pl-12 pr-5 py-4 rounded-xl border border-slate-200 bg-white/50 text-slate-900 placeholder-slate-400 font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 shadow-sm group-hover:bg-white"
+            />
+          </div>
+
+          {/* Action Button */}
+          <button
+            type="submit"
+            disabled={loading || authLoading}
+            className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transform transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
+          >
+            {loading || authLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing...
+              </span>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-slate-500">
+            Don’t have an account?{" "}
+            <span
+              className="text-indigo-600 font-bold hover:text-indigo-700 cursor-pointer transition-colors"
+              onClick={() => navigate("/registration")}
+            >
+              Create Account
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
