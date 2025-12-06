@@ -26,9 +26,7 @@ export default function Signup() {
 
     try {
       const { name, email, password } = formData;
-      console.log(name, email, password);
       const result = await signup(name, email, password);
-      console.log(result);
       if (result.success) {
         setUserId(result.userId);
       } else {
