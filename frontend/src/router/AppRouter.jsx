@@ -10,6 +10,7 @@ import Tracker from "../pages/Tracker";
 import Notifications from "../pages/Notifications";
 import Settings from "../pages/Settings";
 import ProtectedRoute from "../components/ProtectedRoute";
+import PublicRoute from "./PublicRoute";
 import AuthProvider from "../context/AuthContext";
 import OtpVerification from "../pages/OtpVerification";
 
@@ -18,10 +19,12 @@ const AppRouter = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/otp" element={<OtpVerification />} />
+          <Route element={<PublicRoute />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registration" element={<Registration />} />
+            <Route path="/otp" element={<OtpVerification />} />
+          </Route>
 
           <Route element={<ProtectedRoute />}>
             <Route path="/profile-setup" element={<ProfileSetup />} />

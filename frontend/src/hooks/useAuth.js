@@ -17,7 +17,7 @@ export function useAuth() {
         storage.saveRefreshToken(res.data.refreshToken);
 
         setUser(res.data.user);
-
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         return { success: true };
       } catch (err) {
         return {
@@ -34,12 +34,13 @@ export function useAuth() {
   const signup = useCallback(
     async (name, email, password) => {
       setLoading(true);
-      console.log("--------");
-
       try {
-        console.log(name, email, password);
         const res = await authApi.signup({ name, email, password });
-        console.log(res);
+        storage.saveAccessToken(res.data.accessToken);
+        storage.saveRefreshToken(res.data.refreshToken);
+
+        setUser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         return {
           success: true,
           userId: res.data.userId,
@@ -58,6 +59,7 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     storage.clearAuth();
+    localStorage.removeItem("user");
     setUser(null);
   }, [setUser]);
 
