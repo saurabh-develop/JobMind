@@ -32,13 +32,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-slate-50 overflow-hidden">
-      {/* Decorative Ambient Blobs (Using Palette Colors) */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-200/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-slate-300/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
 
-      {/* Main Glass Card */}
       <div className="relative z-10 w-full max-w-md p-10 bg-white/70 backdrop-blur-2xl border border-white/50 shadow-[0_8px_40px_rgb(0,0,0,0.04)] rounded-3xl">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-indigo-600 tracking-tight mb-2">
             JobMind
@@ -48,7 +45,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center animate-pulse">
             {error}
@@ -56,7 +52,6 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {/* Email Input Group */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -83,7 +78,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Password Input Group */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -110,7 +104,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Action Button */}
           <button
             type="submit"
             disabled={loading || authLoading}
@@ -145,7 +138,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-slate-500">
             Don’t have an account?{" "}

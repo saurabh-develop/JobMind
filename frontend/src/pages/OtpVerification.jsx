@@ -9,9 +9,8 @@ export default function OtpVerification({ userId }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(60); // 60 sec cooldown for resend
+  const [cooldown, setCooldown] = useState(60);
 
-  // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
@@ -39,10 +38,10 @@ export default function OtpVerification({ userId }) {
   };
 
   const handleResend = async () => {
-    if (cooldown > 0) return; // prevent spamming
+    if (cooldown > 0) return;
     try {
       await authApi.resendOtp(userId);
-      setCooldown(60); // reset cooldown
+      setCooldown(60);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP");
     }

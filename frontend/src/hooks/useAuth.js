@@ -32,18 +32,18 @@ export function useAuth() {
   );
 
   const signup = useCallback(
-    async (data) => {
+    async (name, email, password) => {
       setLoading(true);
+      console.log("--------");
 
       try {
-        const res = await authApi.signup(data);
-
-        storage.saveAccessToken(res.data.accessToken);
-        storage.saveRefreshToken(res.data.refreshToken);
-
-        setUser(res.data.user);
-
-        return { success: true };
+        console.log(name, email, password);
+        const res = await authApi.signup({ name, email, password });
+        console.log(res);
+        return {
+          success: true,
+          userId: res.data.userId,
+        };
       } catch (err) {
         return {
           success: false,
@@ -53,7 +53,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [setUser, setLoading]
+    [setLoading]
   );
 
   const logout = useCallback(() => {
@@ -70,12 +70,21 @@ export function useAuth() {
     try {
       const res = await authApi.getMe();
       setUser(res.data.user);
-    } catch (err) {
+    } catch {
       logout();
     } finally {
       setLoading(false);
     }
   }, [setUser, setLoading, logout]);
+
+  const loginWithTokens = useCallback(
+    (user, accessToken, refreshToken) => {
+      storage.saveAccessToken(accessToken);
+      storage.saveRefreshToken(refreshToken);
+      setUser(user);
+    },
+    [setUser]
+  );
 
   return {
     user,
@@ -85,6 +94,7 @@ export function useAuth() {
     logout,
     restoreSession,
     isAuthenticated: Boolean(user),
+    loginWithTokens,
   };
 }
 

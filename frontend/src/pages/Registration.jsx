@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authApi from "../api/authApi";
 import OtpVerification from "./OtpVerification";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,7 +13,7 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userId, setUserId] = useState(null); // For OTP step
+  const [userId, setUserId] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
@@ -24,10 +25,17 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const res = await authApi.signup(formData);
-      setUserId(res.data.userId); // move to OTP page
+      const { name, email, password } = formData;
+      console.log(name, email, password);
+      const result = await signup(name, email, password);
+      console.log(result);
+      if (result.success) {
+        setUserId(result.userId);
+      } else {
+        setError(result.message);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed");
+      setError("Signup failed");
     } finally {
       setLoading(false);
     }
@@ -37,13 +45,9 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-slate-50 overflow-hidden">
-      {/* Decorative Ambient Blobs */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-200/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-slate-300/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply" />
-
-      {/* Main Glass Card */}
       <div className="relative z-10 w-full max-w-md p-10 bg-white/70 backdrop-blur-2xl border border-white/50 shadow-[0_8px_40px_rgb(0,0,0,0.04)] rounded-3xl">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-indigo-600 tracking-tight mb-2">
             JobMind
@@ -53,7 +57,6 @@ export default function Signup() {
           </p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center animate-pulse">
             {error}
@@ -61,7 +64,6 @@ export default function Signup() {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {/* Name Input */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -89,7 +91,6 @@ export default function Signup() {
             />
           </div>
 
-          {/* Email Input */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -117,7 +118,6 @@ export default function Signup() {
             />
           </div>
 
-          {/* Password Input */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -145,7 +145,6 @@ export default function Signup() {
             />
           </div>
 
-          {/* Action Button */}
           <button
             type="submit"
             disabled={loading}
@@ -180,7 +179,6 @@ export default function Signup() {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-slate-500">
             Already have an account?{" "}
