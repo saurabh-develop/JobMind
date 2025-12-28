@@ -4,6 +4,7 @@ import * as otpService from "./otp.service.js";
 import { signAccessToken } from "../config/jwt.js";
 import { generateRefreshToken } from "./token.service.js";
 import RefreshToken from "../models/refreshToken.model.js";
+import { googleClient } from "../config/oauth.js";
 
 export const register = async ({ email, password }) => {
   const existingUser = await User.findOne({ email });
@@ -43,6 +44,61 @@ export const login = async ({ email, password }) => {
 
   if (!isMatch) {
     throw new Error("Invalid credentials");
+  }
+
+  const accessToken = signAccessToken({
+    userId: user._id,
+    tokenVersion: user.tokenVersion,
+  });
+
+  const refreshToken = await generateRefreshToken(user);
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: user._id,
+      email: user.email,
+    },
+  };
+};
+
+export const googleLogin = async (code) => {
+  const { tokens } = await googleClient.getToken(code);
+  googleClient.setCredentials(tokens);
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken: tokens.id_token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const { email, sub: googleId } = payload;
+
+  if (!email) {
+    throw new Error("Google account has no email");
+  }
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      email,
+      isEmailVerified: true,
+      oauthProviders: [{ provider: "google", providerId: googleId }],
+    });
+  } else {
+    const alreadyLinked = user.oauthProviders?.some(
+      (p) => p.provider === "google"
+    );
+    if (!alreadyLinked) {
+      user.oauthProviders.push({
+        provider: "google",
+        providerId: googleId,
+      });
+      user.isEmailVerified = true;
+      await user.save();
+    }
   }
 
   const accessToken = signAccessToken({

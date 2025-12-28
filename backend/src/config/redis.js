@@ -17,3 +17,4 @@ const connectRedis = async () => {
 
 export const getRedis = () => redisClient;
 export default connectRedis;
+ 

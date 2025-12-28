@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sentOTPEmail = async (email, otp) => {
+export const sendOTPEmail = async (email, otp) => {
   await transporter.sendMail({
     from: `"JobMind" <${(process, env.EMAIL_USER)}`,
     to: email,

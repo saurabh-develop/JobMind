@@ -48,3 +48,16 @@ export const refreshToken = async (req, res, next) => {
     next(error);
   }
 };
+
+export const googleAuthCallback = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+    const result = await authService.googleLogin(code);
+
+    const redrirectUrl = `${process.env.FRONTEND_URL}/oauth-success?accessToken=${result.accessToken}&refreshToken=${result.refreshToken}`;
+
+    res.redirect(redrirectUrl);
+  } catch (error) {
+    next(error);
+  }
+};
