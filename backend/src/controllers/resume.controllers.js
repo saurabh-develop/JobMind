@@ -20,11 +20,15 @@ export const uploadResume = async (req, res) => {
     parsedData: null,
   });
 
-  await resumeQueue.add("parseResume", {
-    resumeId: resume._id,
-    userId,
-    cloudinaryUrl: resume.cloudinaryUrl,
-  });
+  await resumeQueue.add(
+    "parseResume",
+    {
+      resumeId: resume._id,
+      userId,
+      cloudinaryUrl: resume.cloudinaryUrl,
+    },
+    { attempts: 3, backoff: 5000 }
+  );
 
   res.status(201).json({
     message: "Resume uploaded. Parsing started.",
