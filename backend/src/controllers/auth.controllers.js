@@ -2,6 +2,8 @@ import * as authService from "../services/auth.service.js";
 import RefreshToken from "../models/refreshToken.model.js";
 import User from "../models/user.model.js";
 import { rotateRefreshToken } from "../services/token.service.js";
+import { googleLogin } from "../services/auth.service.js";
+import { getGoogleAuthURL } from "../services/googleOAuth.service.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -36,28 +38,37 @@ export const refreshToken = async (req, res, next) => {
 
     const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
 
-    if (!tokenDoc) {
+    if (!tokenDoc || tokenDoc.isRevoked) {
       throw new Error("Invalid refresh token");
     }
 
     const user = await User.findById(tokenDoc.userId);
 
     const result = await rotateRefreshToken(refreshToken, user);
+
     res.status(200).json(result);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 
-export const googleAuthCallback = async (req, res, next) => {
+export const googleAuth = (req, res) => {
+  const url = getGoogleAuthURL();
+  res.redirect(url);
+};
+
+export const googleCallback = async (req, res, next) => {
   try {
     const { code } = req.query;
-    const result = await authService.googleLogin(code);
-
-    const redrirectUrl = `${process.env.FRONTEND_URL}/oauth-success?accessToken=${result.accessToken}&refreshToken=${result.refreshToken}`;
-
-    res.redirect(redrirectUrl);
-  } catch (error) {
-    next(error);
+    const data = await googleLogin(code);
+    res.json(data);
+  } catch (err) {
+    next(err);
   }
+};
+
+export const getMe = async (req, res) => {
+  res.status(200).json({
+    user: req.user,
+  });
 };

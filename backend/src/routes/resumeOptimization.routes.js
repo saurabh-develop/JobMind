@@ -1,6 +1,6 @@
 import express from "express";
-import { optimizeResume } from "../controllers/resumeOptimization.controllers";
-import { authenticate } from "../middlewares/auth.middlewares";
+import { optimizeResume } from "../controllers/resumeOptimization.controllers.js";
+import { authenticate } from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
 

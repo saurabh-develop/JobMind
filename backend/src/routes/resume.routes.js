@@ -6,6 +6,6 @@ import { authenticate } from "../middlewares/auth.middlewares.js";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-router.post("upload", authenticate, upload.single("resume"), uploadResume);
+router.post("/upload", authenticate, upload.single("resume"), uploadResume);
 
 export default router;

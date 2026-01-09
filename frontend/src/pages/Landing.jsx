@@ -75,17 +75,17 @@ const Landing = () => {
 
           <div className="grid gap-8 md:grid-cols-3">
             <Feature
-              icon="📄"
+              icon="applicant.png"
               title="Smart Resume Parsing"
               desc="AI extracts skills, experience, and confidence scores from your resume."
             />
             <Feature
-              icon="🎯"
+              icon="target.png"
               title="Personalized Job Matching"
               desc="Scoring-based recommendations using skills, salary, location & recency."
             />
             <Feature
-              icon="⚡"
+              icon="optimization.png"
               title="Resume Optimization"
               desc="ATS keyword gaps, missing skills & AI rewritten bullet points."
             />
@@ -131,7 +131,9 @@ const Feature = ({ icon, title, desc }) => (
     />
 
     <div className="relative z-10 text-center">
-      <div className="text-4xl mb-5">{icon}</div>
+      <div className="w-13 m-auto mb-5">
+        <img src={icon} alt="resume" />
+      </div>
       <h3 className="text-xl font-semibold mb-3">{title}</h3>
       <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
     </div>

@@ -15,6 +15,7 @@ import ResumeOptimizer from "../pages/resume/ResumeOptimizer";
 import JobSearch from "../pages/jobs/JobSearch";
 import JobDetails from "../pages/jobs/JobDetails";
 import Recommendations from "../pages/jobs/Recommendations";
+import OAuthSuccess from "../pages/auth/OAuthSuccess";
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/oauth-success" element={<OAuthSuccess />} />
 
       {/* Protected */}
       <Route

@@ -5,18 +5,21 @@ import { signAccessToken } from "../config/jwt.js";
 const REFRESH_TOKEN_EXPIRY_DAYS = 15;
 
 export const generateRefreshToken = async (user) => {
-  const token = crypto.randomBytes(64).toString("hex");
+  const refreshToken = crypto.randomBytes(64).toString("hex");
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
+  const expiresAt = new Date(
+    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+  );
 
   await RefreshToken.create({
     userId: user._id,
-    token,
+    token: refreshToken,
     expiresAt,
   });
 
-  return token;
+  const accessToken = signAccessToken({ userId: user._id });
+
+  return { accessToken, refreshToken };
 };
 
 export const rotateRefreshToken = async (oldToken, user) => {
@@ -28,23 +31,25 @@ export const rotateRefreshToken = async (oldToken, user) => {
 
   existingToken.isRevoked = true;
 
-  const newToken = crypto.randomBytes(64).toString("hex");
+  const newRefreshToken = crypto.randomBytes(64).toString("hex");
+  existingToken.replacedByToken = newRefreshToken;
 
-  existingToken.replacedByToken = newToken;
   await existingToken.save();
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
+  const expiresAt = new Date(
+    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+  );
 
   await RefreshToken.create({
     userId: user._id,
-    tokenVersion: user.tokenVersion,
+    token: newRefreshToken,
+    expiresAt,
   });
 
-  const accessToken = signAccessToken({
-    userId: user._id,
-    tokenVersion: user.tokenVersion,
-  });
+  const accessToken = signAccessToken({ userId: user._id });
 
-  return { accessToken, refreshToken: newToken };
+  return {
+    accessToken,
+    refreshToken: newRefreshToken,
+  };
 };
