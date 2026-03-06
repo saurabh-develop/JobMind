@@ -1,52 +1,54 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config/api.config";
-import { getAccessToken, setAccessToken, clearAuth } from "../utils/helpers";
 
-const axiosClient = axios.create({
+const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
-axiosClient.interceptors.request.use((config) => {
-  const token = getAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+};
+
+export const getAccessToken = () => accessToken;
+
+// Attach access token to every request
+api.interceptors.request.use((config) => {
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
 
-// axiosClient.interceptors.response.use(
-//   (res) => res,
-//   async (error) => {
-//     const originalRequest = error.config;
+// Auto refresh on 401
+api.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    const original = err.config;
 
-//     if (
-//       error.response?.status === 401 &&
-//       !originalRequest._retry &&
-//       !originalRequest.url.includes("/auth/refresh")
-//     ) {
-//       originalRequest._retry = true;
+    if (err.response?.status === 401 && !original._retry) {
+      original._retry = true;
 
-//       try {
-//         const res = await axios.post(
-//           `${API_BASE_URL}/auth/refresh`,
-//           {},
-//           { withCredentials: true }
-//         );
+      try {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true },
+        );
 
-//         setAccessToken(res.data.accessToken);
-//         originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+        accessToken = data.accessToken;
+        original.headers.Authorization = `Bearer ${accessToken}`;
 
-//         return axiosClient(originalRequest);
-//       } catch (err) {
-//         clearAuth();
-//         window.location.href = "/login";
-//         return Promise.reject(err);
-//       }
-//     }
+        return api(original);
+      } catch (refreshError) {
+        window.location.href = "/login";
+      }
+    }
 
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(err);
+  },
+);
 
-export default axiosClient;
+export default api;

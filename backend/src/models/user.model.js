@@ -12,7 +12,7 @@ const oauthProviderSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const userSchema = new mongoose.Schema(
@@ -24,21 +24,28 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       index: true,
     },
+
     password: {
       type: String,
-      required: false,
+      default: null,
     },
-    oauthProviders: [oauthProviderSchema],
+
+    oauthProviders: {
+      type: [oauthProviderSchema],
+      default: [],
+    },
+
     isEmailVerified: {
       type: Boolean,
       default: false,
     },
+
     tokenVersion: {
       type: Number,
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("User", userSchema);

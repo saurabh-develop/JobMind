@@ -1,7 +1,7 @@
 import Resume from "../models/resume.model.js";
 import { uploadToCloudinary } from "../services/cloudinary.service.js";
 import { resumeQueue } from "../queues/resume.queue.js";
-import fs from "fs";
+import fs from "node:fs";
 
 export const uploadResume = async (req, res) => {
   const userId = req.user.id;

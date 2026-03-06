@@ -7,6 +7,8 @@ import {
   googleCallback,
   googleAuth,
   getMe,
+  logout,
+  logoutAll,
 } from "../controllers/auth.controllers.js";
 import { authenticate } from "../middlewares/auth.middlewares.js";
 
@@ -19,5 +21,7 @@ router.post("refresh-token", refreshToken);
 router.get("/google", googleAuth);
 router.get("/google/callback", googleCallback);
 router.get("/me", authenticate, getMe);
+router.get("/logout", logout);
+router.get("logoutAll", logoutAll);
 
 export default router;

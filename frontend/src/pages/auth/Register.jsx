@@ -14,6 +14,7 @@ const Register = () => {
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       await registerApi(form);
       navigate("/verify-otp", { state: { email: form.email } });
@@ -25,17 +26,10 @@ const Register = () => {
   };
 
   return (
-    <AuthCard
-      title="Create your account"
-      subtitle="Start your AI-powered job journey"
-    >
+    <AuthCard title="Create your account">
       <GoogleButton />
 
-      <div className="flex items-center gap-3 my-6">
-        <div className="h-px flex-1 bg-slate-700" />
-        <span className="text-xs text-slate-400">OR</span>
-        <div className="h-px flex-1 bg-slate-700" />
-      </div>
+      <div className="my-6 text-center text-slate-400 text-xs">OR</div>
 
       <form onSubmit={submit} className="space-y-4">
         <Input
@@ -54,7 +48,9 @@ const Register = () => {
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
 
-        <Button className="w-full">Register</Button>
+        <Button className="w-full" disabled={loading}>
+          {loading ? "Creating..." : "Register"}
+        </Button>
       </form>
     </AuthCard>
   );

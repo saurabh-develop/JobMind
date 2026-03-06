@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthCard from "../../components/auth/AuthCard.jsx";
-import GoogleButton from "../../components/auth/GoogleButton.jsx";
+import AuthCard from "../../components/auth/AuthCard";
+import GoogleButton from "../../components/auth/GoogleButton";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 import { loginApi } from "../../api/auth.api";
 import { AuthContext } from "../../context/AuthContext";
+import { setAccessToken } from "../../api/axiosClient";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -14,10 +15,13 @@ const Login = () => {
 
   const submit = async (e) => {
     e.preventDefault();
+
     try {
       const { data } = await loginApi(form);
-      localStorage.setItem("accessToken", data.accessToken);
+
+      setAccessToken(data.accessToken);
       setUser(data.user);
+
       navigate("/jobs");
     } catch {
       alert("Invalid credentials");
@@ -25,14 +29,10 @@ const Login = () => {
   };
 
   return (
-    <AuthCard title="Welcome back" subtitle="Log in to continue your journey">
+    <AuthCard title="Welcome back">
       <GoogleButton />
 
-      <div className="flex items-center gap-3 my-6">
-        <div className="h-px flex-1 bg-slate-700" />
-        <span className="text-xs text-slate-400">OR</span>
-        <div className="h-px flex-1 bg-slate-700" />
-      </div>
+      <div className="my-6 text-center text-slate-400 text-xs">OR</div>
 
       <form onSubmit={submit} className="space-y-4">
         <Input

@@ -1,21 +1,32 @@
 import { useEffect, useContext } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { refreshApi, getMeApi } from "../../api/auth.api";
+import { setAccessToken } from "../../api/axiosClient";
 import { AuthContext } from "../../context/AuthContext";
 
 const OAuthSuccess = () => {
-  const [params] = useSearchParams();
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
 
   useEffect(() => {
-    const token = params.get("token");
-    if (token) {
-      localStorage.setItem("accessToken", token);
-      navigate("/jobs");
-    }
+    const init = async () => {
+      try {
+        const { data } = await refreshApi();
+        setAccessToken(data.accessToken);
+
+        const me = await getMeApi();
+        setUser(me.data.user);
+
+        navigate("/jobs");
+      } catch {
+        navigate("/login");
+      }
+    };
+
+    init();
   }, []);
 
-  return null;
+  return <div className="text-white text-center mt-20">Signing you in...</div>;
 };
 
 export default OAuthSuccess;

@@ -1,58 +1,34 @@
-import { createContext, useEffect, useMemo, useState } from "react";
-import { loginApi, logoutApi, meApi } from "../api/auth.api";
-import { setAccessToken, clearAuth } from "../utils/helpers";
+import { createContext, useState, useEffect } from "react";
+import { refreshApi, getMeApi } from "../api/auth.api";
+import { setAccessToken } from "../api/axiosClient";
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const login = async (data) => {
+  const initializeAuth = async () => {
     try {
-      const res = await loginApi(data);
-      setAccessToken(res.accessToken);
-      setUser(res.user);
-      return res;
-    } catch (error) {
-      throw error;
-    }
-  };
+      const { data } = await refreshApi();
+      setAccessToken(data.accessToken);
 
-  const logout = async () => {
-    try {
-      await logoutApi();
-    } finally {
-      clearAuth();
+      const me = await getMeApi();
+      setUser(me.data.user);
+    } catch {
       setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // useEffect(() => {
-  //   const init = async () => {
-  //     try {
-  //       const { data } = meApi();
-  //       setUser(data.user);
-  //     } catch {
-  //       clearAuth();
-  //       setUser(null);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    initializeAuth();
+  }, []);
 
-  //   init();
-  // }, [user]);
-
-  const value = useMemo(
-    () => ({
-      user,
-      login,
-      logout,
-      loading,
-    }),
-    [user, loading]
+  return (
+    <AuthContext.Provider value={{ user, setUser, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

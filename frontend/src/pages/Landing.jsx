@@ -14,7 +14,7 @@ const Landing = () => {
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
             AI-Powered Job Recommendations <br />
             Built Around{" "}
-            <span className="bg-linear-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-sky-40 0 to-indigo-400 bg-clip-text text-transparent">
               You
             </span>
           </h1>

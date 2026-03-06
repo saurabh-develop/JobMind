@@ -1,22 +1,13 @@
-import axiosClient from "./axiosClient";
+import api from "./axiosClient";
 
-export const registerApi = (payload) => {
-  axiosClient.post("/auth/register", payload);
-};
+export const registerApi = (data) => api.post("/auth/register", data);
 
-export const verifyOtpApi = (payload) => {
-  axiosClient.post("/auth/verify-otp", payload);
-};
+export const loginApi = (data) => api.post("/auth/login", data);
 
-export const loginApi = (payload) => {
-  const res = axiosClient.post("/auth/login", payload);
-  return res.data;
-};
+export const verifyOtpApi = (data) => api.post("/auth/verify-otp", data);
 
-export const logoutApi = () => {
-  axiosClient.post("/auth/logout");
-};
+export const getMeApi = () => api.get("/auth/me");
 
-export const meApi = () => {
-  axiosClient.get("/auth/me");
-};
+export const logoutApi = () => api.post("/auth/logout");
+
+export const refreshApi = () => api.post("/auth/refresh-token");

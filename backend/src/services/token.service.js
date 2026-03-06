@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import RefreshToken from "../models/refreshToken.model.js";
 import { signAccessToken } from "../config/jwt.js";
 
@@ -8,7 +8,7 @@ export const generateRefreshToken = async (user) => {
   const refreshToken = crypto.randomBytes(64).toString("hex");
 
   const expiresAt = new Date(
-    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
   );
 
   await RefreshToken.create({
@@ -37,7 +37,7 @@ export const rotateRefreshToken = async (oldToken, user) => {
   await existingToken.save();
 
   const expiresAt = new Date(
-    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
+    Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
   );
 
   await RefreshToken.create({

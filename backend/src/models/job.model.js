@@ -9,11 +9,15 @@ const salarySchema = new mongoose.Schema(
       default: "INR",
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const jobSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -53,7 +57,7 @@ const jobSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    source: {
+    applyUrl: {
       type: String,
       index: true,
     },
@@ -76,7 +80,7 @@ const jobSchema = new mongoose.Schema(
       index: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 jobSchema.index({ title: "text", description: "text" });
